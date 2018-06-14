@@ -4,6 +4,9 @@ const isUrl = require('is-url');
 const puppeteer = require('puppeteer');
 const checkCharset = require('./checklist/check-charset');
 const commaSymbols = require('./symbols/comma');
+const ellipsisSymbols = require('./symbols/ellipsis');
+const percentSymbols = require('./symbols/percent');
+const quoteSymbols = require('./symbols/quote');
 // const got = require('got');
 // const cheerio = require('cheerio');
 
@@ -18,20 +21,20 @@ yargs
       default: 'utf-8',
     })
     .option('comma', {
-      choices: ['、', ','],
-      default: '、'
-    })
-    .option('ellipsis', {
       choices: commaSymbols,
       default: commaSymbols[0]
     })
+    .option('ellipsis', {
+      choices: ellipsisSymbols,
+      default: ellipsisSymbols[0]
+    })
     .option('quote', {
-      choices: ['”', '"', '’', '\''],
-      default: '”'
+      choices: quoteSymbols,
+      default: quoteSymbols[0]
     })
     .option('percent', {
-      choices: ['％', '%'],
-      default: '％'
+      choices: percentSymbols,
+      default: percentSymbols[0]
     })
   },
   async argv => {

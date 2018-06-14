@@ -1,10 +1,10 @@
 const fs = require('fs-extra');
 const puppeteer = require('puppeteer');
-const checkComma = require('./check-comma');
+const checkEllipsis = require('./check-ellipsis');
 
-describe('check-comma', () => {
+describe('check-ellipsis', () => {
   let browser;
-  let checker = checkComma(',');
+  let checker = checkEllipsis('…');
 
   beforeAll(async () => {
     browser = await puppeteer.launch();
@@ -17,7 +17,7 @@ describe('check-comma', () => {
   test('valid.html', async done => {
     const result = await checker(async () => {
       page = await browser.newPage();
-      const html = await fs.readFile(__dirname + '/check-comma-fixtures/valid.html', 'utf-8');
+      const html = await fs.readFile(__dirname + '/check-ellipsis-fixtures/valid.html', 'utf-8');
       await page.setContent(html);
       
       return page;
@@ -29,7 +29,7 @@ describe('check-comma', () => {
   test('invalid.html', async done => {
     const result = await checker(async () => {
       page = await browser.newPage();
-      const html = await fs.readFile(__dirname + '/check-comma-fixtures/invalid.html', 'utf-8');
+      const html = await fs.readFile(__dirname + '/check-ellipsis-fixtures/invalid.html', 'utf-8');
       await page.setContent(html);
       
       return page; 
