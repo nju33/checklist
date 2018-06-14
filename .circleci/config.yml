@@ -8,11 +8,11 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-{{ checksum "src/package.json" }}
           - v1-dependencies-
-      - run: yarn install
+      - run: cd src && yarn install
       - save_cache:
           paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run: yarn test
+            - src/node_modules
+          key: v1-dependencies-{{ checksum "src/package.json" }}
+      - run: cd src && yarn test
