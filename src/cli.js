@@ -1,20 +1,28 @@
+const path = require('path');
 const fs = require('fs-extra');
 const yargs = require('yargs');
 const isUrl = require('is-url');
 const puppeteer = require('puppeteer');
-const checkCharset = require('./checklist/check-charset');
 const commaSymbols = require('./symbols/comma');
 const ellipsisSymbols = require('./symbols/ellipsis');
 const percentSymbols = require('./symbols/percent');
 const quoteSymbols = require('./symbols/quote');
+const validateFilenameOrUrl = require('./validations/filename-or-url');
+const validateExternalLinks = require('./validations/external-links');
+const checkCharset = require('./checklist/check-charset');
+const checkComma = require('./checklist/check-charset');
+const checkEllipsis = require('./checklist/check-charset');
+const checkQuote = require('./checklist/check-charset');
+const checkPercent = require('./checklist/check-charset');
+const checkExternalLinks = require('./checklist/check-external-links');
 // const got = require('got');
 // const cheerio = require('cheerio');
 
 yargs
-  .command('$0 [filename]', 'test', yargs => {
-    yargs.positional('filename', {
+  .command('$0 [filename-or-url]', 'test', yargs => {
+    yargs.positional('filename-or-url', {
       type: 'string',
-      describe: 'target filename'
+      describe: 'Specify target filename or URL'
     })
     .option('charset', {
       type: 'string',
@@ -36,29 +44,45 @@ yargs
       choices: percentSymbols,
       default: percentSymbols[0]
     })
+    .option('external-links', {
+      type: 'array',
+      default: [],
+    })
   },
   async argv => {
-    // if (!isUrl(argv.url)) {
-    //   yargs.showHelp();
-    //   throw new Error('URLを指定してください');
-    // }
-    const {filename} = argv;
+    const {filenameOrUrl} = argv;
+    try {
+      await validateFilenameOrUrl(filenameOrUrl);
+      await validateExternalLinks(argv.externalLinks);
+    } catch (err) {
+      console.error(err);
+      yargs.showHelp();
+      process.exit(1);
+    }
 
     const browser = await puppeteer.launch();
     const initPage = async () => {
       page = await browser.newPage();
-      const html = await fs.readFile(filename, 'utf-8');
-      await page.setContent(html);
+      if (isUrl(filenameOrUrl)) {
+        const url = filenameOrUrl;
+        await page.goto(url);
+      } else {
+        const relativePath = filenameOrUrl;
+        const filename = path.resolve(process.cwd(), relativePath);
+        const html = await fs.readFile(filename, 'utf-8');
+        await page.setContent(html);
+      }
       
       return page;
     };
-    // await page.goto('url', {
-    //   waitUntil: 'networkidle2'
-    // });
 
     const result = await Promise.all([
       checkCharset(argv.charset)(initPage),
-      checkCommma(argv.comma)(initPage),
+      checkComma(argv.comma)(initPage),
+      checkEllipsis(argv.ellipsis)(initPage),
+      checkQuote(argv.quote)(initPage),
+      checkPercent(argv.percent)(initPage),
+      checkExternalLinks(argv.externalLinks)(initPage),
     ])
 
     console.log(result);
