@@ -15,6 +15,7 @@ const checkEllipsis = require('./checklist/check-charset');
 const checkQuote = require('./checklist/check-charset');
 const checkPercent = require('./checklist/check-charset');
 const checkExternalLinks = require('./checklist/check-external-links');
+const Reporter = require('./reporter');
 // const got = require('got');
 // const cheerio = require('cheerio');
 
@@ -77,7 +78,7 @@ yargs
     };
 
     const result = await Promise.all([
-      checkCharset(argv.charset)(initPage),
+      Reporter.report(checkCharset(argv.charset)(initPage)),
       checkComma(argv.comma)(initPage),
       checkEllipsis(argv.ellipsis)(initPage),
       checkQuote(argv.quote)(initPage),
