@@ -36,6 +36,10 @@ yargs
           type: 'string',
           default: 'utf-8'
         })
+        .option('title', {
+          type: 'string',
+          demandOption: true
+        })
         .option('comma', {
           choices: commaSymbols,
           default: commaSymbols[0]
