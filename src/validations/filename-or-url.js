@@ -4,6 +4,10 @@ const isUrl = require('is-url');
 const isRelativePath = require('is-relative-path');
 
 module.exports = async filenameOrUrl => {
+  if (isUrl(filenameOrUrl)) {
+    return;
+  }
+
   if (isRelativePath(filenameOrUrl)) {
     const relativePath = filenameOrUrl;
     const filename = path.resolve(process.cwd(), filenameOrUrl);
@@ -12,10 +16,6 @@ module.exports = async filenameOrUrl => {
     if (!result) {
       throw new Error(`存在しないファイル名です » ${filename}`);
     }
-    return;
-  }
-
-  if (isUrl(filenameOrUrl)) {
     return;
   }
 
