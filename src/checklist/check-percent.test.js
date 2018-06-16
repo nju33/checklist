@@ -2,6 +2,8 @@ const fs = require('fs-extra');
 const puppeteer = require('puppeteer');
 const checkPercent = require('./check-percent');
 
+jest.setTimeout(60000);
+
 describe('check-percent', () => {
   let browser;
   let checker = checkPercent('％');
@@ -21,7 +23,7 @@ describe('check-percent', () => {
       await page.setContent(html);
       
       return page;
-    });
+    })();
     expect(result).toBe(true);
     done();
   });
@@ -33,7 +35,7 @@ describe('check-percent', () => {
       await page.setContent(html);
       
       return page; 
-    });
+    })();
     expect(result).toBe(false);
     done();
   });

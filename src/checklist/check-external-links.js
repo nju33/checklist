@@ -1,4 +1,4 @@
-module.exports = externalLinks => async initPage => {
+module.exports = externalLinks => initPage => async () => {
   const page = await initPage();
 
   const externalLinkElementHandles = await Promise.all(

@@ -2,6 +2,8 @@ const fs = require('fs-extra');
 const puppeteer = require('puppeteer');
 const checkCharset = require('./check-charset');
 
+jest.setTimeout(60000);
+
 describe('check-charset', () => {
   let browser;
   let checker = checkCharset('utf-8');
@@ -21,7 +23,7 @@ describe('check-charset', () => {
       await page.setContent(html);
       
       return page;
-    });
+    })();
     expect(result).toBe(true);
     done();
   });
@@ -33,7 +35,7 @@ describe('check-charset', () => {
       await page.setContent(html);
       
       return page; 
-    });
+    })();
     expect(result).toBe(false);
     done();
   });

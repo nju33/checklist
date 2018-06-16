@@ -1,12 +1,12 @@
 const fs = require('fs-extra');
 const puppeteer = require('puppeteer');
-const checkExternalLinks = require('./check-external-links');
+const checkTitle = require('./check-title');
 
 jest.setTimeout(60000);
 
-describe('check-links', () => {
+describe('check-title', () => {
   let browser;
-  let checker = checkExternalLinks(['https://external.link.com']);
+  let checker = checkTitle('Document');
 
   beforeAll(async () => {
     browser = await puppeteer.launch();
@@ -19,12 +19,9 @@ describe('check-links', () => {
   test('valid.html', async done => {
     const result = await checker(async () => {
       page = await browser.newPage();
-      const html = await fs.readFile(
-        __dirname + '/check-external-links-fixtures/valid.html',
-        'utf-8'
-      );
+      const html = await fs.readFile(__dirname + '/check-title-fixtures/valid.html', 'utf-8');
       await page.setContent(html);
-
+      
       return page;
     })();
     expect(result).toBe(true);
@@ -34,13 +31,10 @@ describe('check-links', () => {
   test('invalid.html', async done => {
     const result = await checker(async () => {
       page = await browser.newPage();
-      const html = await fs.readFile(
-        __dirname + '/check-external-links-fixtures/invalid.html',
-        'utf-8'
-      );
+      const html = await fs.readFile(__dirname + '/check-title-fixtures/invalid.html', 'utf-8');
       await page.setContent(html);
-
-      return page;
+      
+      return page; 
     })();
     expect(result).toBe(false);
     done();

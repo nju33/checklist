@@ -2,6 +2,8 @@ const fs = require('fs-extra');
 const puppeteer = require('puppeteer');
 const checkComma = require('./check-comma');
 
+jest.setTimeout(60000);
+
 describe('check-comma', () => {
   let browser;
   let checker = checkComma(',');
@@ -21,7 +23,7 @@ describe('check-comma', () => {
       await page.setContent(html);
       
       return page;
-    });
+    })();
     expect(result).toBe(true);
     done();
   });
@@ -33,7 +35,7 @@ describe('check-comma', () => {
       await page.setContent(html);
       
       return page; 
-    });
+    })();
     expect(result).toBe(false);
     done();
   });

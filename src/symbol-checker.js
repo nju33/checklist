@@ -6,11 +6,11 @@ class SymbolChecker {
   }
 
   check(target) {
-    return async initPage => {
+    return initPage => async () => {
       const page = await initPage();
       const text = await page.$eval('body', el => el.innerText);
       const filteredSymbols = this.symbols.filter(symbol => symbol !== target);
-    
+      
       return filteredSymbols.every(symbol => {
         return !text.includes(symbol);
       });

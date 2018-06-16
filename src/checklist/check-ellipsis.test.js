@@ -2,6 +2,8 @@ const fs = require('fs-extra');
 const puppeteer = require('puppeteer');
 const checkEllipsis = require('./check-ellipsis');
 
+jest.setTimeout(60000);
+
 describe('check-ellipsis', () => {
   let browser;
   let checker = checkEllipsis('…');
@@ -21,7 +23,7 @@ describe('check-ellipsis', () => {
       await page.setContent(html);
       
       return page;
-    });
+    })();
     expect(result).toBe(true);
     done();
   });
@@ -33,7 +35,7 @@ describe('check-ellipsis', () => {
       await page.setContent(html);
       
       return page; 
-    });
+    })();
     expect(result).toBe(false);
     done();
   });

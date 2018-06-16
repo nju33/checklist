@@ -1,6 +1,7 @@
 const path = require('path');
 const fs = require('fs-extra');
 const yargs = require('yargs');
+const Listr = require('listr');
 const isUrl = require('is-url');
 const puppeteer = require('puppeteer');
 const commaSymbols = require('./symbols/comma');
@@ -11,10 +12,11 @@ const slashSymbols = require('./symbols/slash');
 const validateFilenameOrUrl = require('./validations/filename-or-url');
 const validateExternalLinks = require('./validations/external-links');
 const checkCharset = require('./checklist/check-charset');
-const checkComma = require('./checklist/check-charset');
-const checkEllipsis = require('./checklist/check-charset');
-const checkQuote = require('./checklist/check-charset');
-const checkPercent = require('./checklist/check-charset');
+const checkTitle = require('./checklist/check-title');
+const checkComma = require('./checklist/check-comma');
+const checkEllipsis = require('./checklist/check-ellipsis');
+const checkQuote = require('./checklist/check-quote');
+const checkPercent = require('./checklist/check-percent');
 const checkExternalLinks = require('./checklist/check-external-links');
 const Reporter = require('./reporter');
 // const got = require('got');
@@ -33,10 +35,13 @@ yargs
           describe: 'Specify target filename or URL'
         })
         .option('charset', {
+          alias: 'c',
           type: 'string',
-          default: 'utf-8'
+          default: 'utf-8',
+          demandOption: true
         })
         .option('title', {
+          alias: 't',
           type: 'string',
           demandOption: true
         })
@@ -92,17 +97,70 @@ yargs
         return page;
       };
 
-      const result = await Promise.all([
-        checkCharset(argv.charset)(initPage),
-        checkComma(argv.comma)(initPage),
-        checkEllipsis(argv.ellipsis)(initPage),
-        checkQuote(argv.quote)(initPage),
-        checkPercent(argv.percent)(initPage),
-        checkExternalLinks(argv.externalLinks)(initPage)
-      ]);
+      const tasks = new Listr([
+        {
+          title: 'meta',
+          task: () => {
+            return new Listr([
+              {
+                exitOnError: false,
+                title: `<meta charset=${argv.charset}>`,
+                task: checkCharset(argv.charset)(initPage)
+              },
+              {
+                exitOnError: false,
+                title: `<meta charset=${argv.charset}>`,
+                title: `<title>${argv.title}</title>`,
+                task: checkTitle(argv.title)(initPage)
+              }
+            ], {
+              exitOnError: false
+            })
+          }
+        },
+        {
+          title: 'symbol',
+          task: () => {
+            return new Listr([
+              {
+                title: 'comma',
+                task: checkComma(argv.comma)(initPage)
+              },
+              {
+                title: 'ellipsis',
+                task: checkEllipsis(argv.ellipsis)(initPage)
+              },
+              {
+                title: 'quote',
+                task: checkQuote(argv.quote)(initPage)
+              },
+              {
+                title: 'percent',
+                task: checkPercent(argv.percent)(initPage)
+              },
+            ], {
+              exitOnError: false
+            })
+          }
+        },
+        {
+          title: 'attribute',
+          task: () => {
+            return new Listr([
+              {
+                title: 'external links',
+                task: checkExternalLinks(argv.externalLinks)(initPage)
+              }
+            ], {
+              exitOnError: false
+            })
+          }
+        }
+      ], {
+        exitOnError: false
+      })
 
-      console.log(result);
-
+      await tasks.run().catch(err => undefined)
       await browser.close();
     }
   )
