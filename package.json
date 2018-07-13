@@ -1,0 +1,33 @@
+{
+  "name": "@geekcojp/checklist",
+  "description": "",
+  "version": "0.0.0",
+  "main": "index.js",
+  "bin": {
+    "checklist": "cli.js"
+  },
+  "license": "MIT",
+  "git": "geekcojp/checklist",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "cheerio": "^1.0.0-rc.2",
+    "cli-table3": "^0.5.0",
+    "core-js": "^2.5.7",
+    "delay": "^3.0.0",
+    "fs-extra": "^6.0.1",
+    "got": "^8.3.1",
+    "is-relative-path": "^2.0.0",
+    "is-url": "^1.2.4",
+    "jest": "^23.1.0",
+    "listr": "^0.14.1",
+    "puppeteer": "^1.5.0",
+    "yargs": "^11.0.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "nju33 <nju33.ki@gmail.com>"
+}
