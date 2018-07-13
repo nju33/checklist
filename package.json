@@ -1,7 +1,7 @@
 {
   "name": "@geekcojp/checklist",
   "description": "",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "index.js",
   "bin": {
     "checklist": "src/cli.js"
