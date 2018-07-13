@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "main": "index.js",
   "bin": {
-    "checklist": "cli.js"
+    "checklist": "src/cli.js"
   },
   "license": "MIT",
   "git": "geekcojp/checklist",
